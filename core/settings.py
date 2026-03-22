@@ -1,3 +1,9 @@
+from pathlib import Path
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 """
 Django settings for core project.
 
@@ -120,3 +126,5 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+PAYSTACK_SECRET_KEY = os.getenv('PAYSTACK_SECRET_KEY')

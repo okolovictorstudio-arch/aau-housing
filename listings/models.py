@@ -37,3 +37,12 @@ class ListingImage(models.Model):
 
     def __str__(self):
         return f"Image for {self.listing.title}"
+
+
+class AgentProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
+    is_subscribed = models.BooleanField(default=False)
+    subscription_expires = models.DateTimeField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.user.username} profile"

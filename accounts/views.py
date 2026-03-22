@@ -1,9 +1,15 @@
+import requests
+import json
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from listings.models import Listing, ListingImage
+from django.conf import settings
+from django.utils import timezone
+from datetime import timedelta
+from listings.models import Listing, ListingImage, AgentProfile
+
 
 def register(request):
     if request.method == 'POST':
@@ -53,8 +59,15 @@ def dashboard(request):
     listings = Listing.objects.filter(agent=request.user)
     return render(request, 'accounts/dashboard.html', {'listings': listings})
 
+
 @login_required(login_url='/accounts/login/')
 def add_listing(request):
+    profile, created = AgentProfile.objects.get_or_create(user=request.user)
+
+    if not profile.is_subscribed or profile.subscription_expires < timezone.now():
+        messages.error(request, 'You need an active subscription to add listings.')
+        return redirect('subscribe')
+
     if request.method == 'POST':
         title = request.POST['title']
         description = request.POST['description']
@@ -82,3 +95,72 @@ def add_listing(request):
         return redirect('dashboard')
 
     return render(request, 'accounts/add_listing.html')
+
+
+@login_required(login_url='/accounts/login/')
+def subscribe(request):
+    return render(request, 'accounts/subscribe.html')
+
+
+@login_required(login_url='/accounts/login/')
+def initiate_payment(request):
+    profile, created = AgentProfile.objects.get_or_create(user=request.user)
+
+    if profile.is_subscribed and profile.subscription_expires > timezone.now():
+        messages.success(request, 'You already have an active subscription.')
+        return redirect('dashboard')
+
+    headers = {
+        'Authorization': f'Bearer {settings.PAYSTACK_SECRET_KEY}',
+        'Content-Type': 'application/json',
+    }
+
+    data = {
+        'email': request.user.email,
+        'amount': 300000,
+        'callback_url': 'http://127.0.0.1:8000/accounts/payment/verify/',
+        'metadata': {
+            'user_id': request.user.id,
+        }
+    }
+
+    response = requests.post(
+        'https://api.paystack.co/transaction/initialize',
+        headers=headers,
+        data=json.dumps(data)
+    )
+
+    result = response.json()
+
+    if result['status']:
+        return redirect(result['data']['authorization_url'])
+    else:
+        messages.error(request, 'Payment initialization failed. Try again.')
+        return redirect('subscribe')
+
+
+@login_required(login_url='/accounts/login/')
+def verify_payment(request):
+    reference = request.GET.get('reference')
+
+    headers = {
+        'Authorization': f'Bearer {settings.PAYSTACK_SECRET_KEY}',
+    }
+
+    response = requests.get(
+        f'https://api.paystack.co/transaction/verify/{reference}',
+        headers=headers
+    )
+
+    result = response.json()
+
+    if result['status'] and result['data']['status'] == 'success':
+        profile, created = AgentProfile.objects.get_or_create(user=request.user)
+        profile.is_subscribed = True
+        profile.subscription_expires = timezone.now() + timedelta(days=30)
+        profile.save()
+        messages.success(request, 'Payment successful! You can now add listings.')
+        return redirect('add_listing')
+    else:
+        messages.error(request, 'Payment failed or was cancelled.')
+        return redirect('subscribe')

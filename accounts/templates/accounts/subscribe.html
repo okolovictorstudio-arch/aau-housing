@@ -1,0 +1,49 @@
+{% extends 'listings/base.html' %}
+
+{% block content %}
+
+<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 40px 16px;">
+    <div class="auth-card" style="max-width: 480px; text-align: center;">
+
+        <div style="font-size: 40px; margin-bottom: 16px;">🏠</div>
+        <h1 class="auth-title">List your properties</h1>
+        <p class="auth-sub">Get your properties in front of hundreds of AAU students every month.</p>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="auth-error" style="text-align: left;">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
+        <div style="background: #f5f0e8; border-radius: 12px; padding: 24px; margin: 24px 0; text-align: left;">
+            <p style="font-size: 13px; font-weight: 600; color: #2d6a4f; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">What you get</p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <div style="display: flex; gap: 10px; font-size: 14px; color: #1c1c1a;">
+                    <span style="color: #2d6a4f; font-weight: 700;">✓</span> Unlimited listing uploads
+                </div>
+                <div style="display: flex; gap: 10px; font-size: 14px; color: #1c1c1a;">
+                    <span style="color: #2d6a4f; font-weight: 700;">✓</span> Direct WhatsApp contact from students
+                </div>
+                <div style="display: flex; gap: 10px; font-size: 14px; color: #1c1c1a;">
+                    <span style="color: #2d6a4f; font-weight: 700;">✓</span> 30 days visibility on AAUHousing
+                </div>
+                <div style="display: flex; gap: 10px; font-size: 14px; color: #1c1c1a;">
+                    <span style="color: #2d6a4f; font-weight: 700;">✓</span> Agent dashboard to manage listings
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            <p style="font-size: 36px; font-weight: 700; color: #1c1c1a;">₦3,000</p>
+            <p style="font-size: 13px; color: #9a9488;">per month</p>
+        </div>
+
+        <a href="/accounts/payment/initiate/" class="btn btn-primary" style="width: 100%; text-align: center; padding: 14px; font-size: 16px; display: block;">
+            Pay with Paystack
+        </a>
+
+        <p style="font-size: 12px; color: #b0a898; margin-top: 16px;">Secured by Paystack. Cancel anytime.</p>
+    </div>
+</div>
+
+{% endblock %}

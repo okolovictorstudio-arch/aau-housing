@@ -19,3 +19,9 @@ class ListingAdmin(admin.ModelAdmin):
 @admin.register(ListingImage)
 class ListingImageAdmin(admin.ModelAdmin):
     list_display = ['listing', 'uploaded_at']
+
+from .models import AgentProfile
+
+@admin.register(AgentProfile)
+class AgentProfileAdmin(admin.ModelAdmin):
+    list_display = ['user', 'is_subscribed', 'subscription_expires']
