@@ -1,0 +1,70 @@
+{% extends 'listings/base.html' %}
+
+{% block content %}
+
+<div style="min-height: 80vh; padding: 48px 16px;">
+    <div class="container" style="max-width: 620px;">
+
+        <a href="/accounts/dashboard/" class="back-link">← Back to dashboard</a>
+
+        <h1 class="section-title" style="margin-bottom: 6px;">Add a new listing</h1>
+        <p class="section-sub">Fill in the details — your listing will be reviewed before going live.</p>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="auth-error">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
+        <form method="POST" enctype="multipart/form-data" style="margin-top: 28px;">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label>Listing title</label>
+                <input type="text" name="title" placeholder="e.g. Clean self-contain near AAU gate" required>
+            </div>
+
+            <div class="form-group">
+                <label>Property type</label>
+                <select name="property_type" required>
+                    <option value="">Select type</option>
+                    <option value="self_con">Self Contain</option>
+                    <option value="single_room">Single Room</option>
+                    <option value="flat">Flat / Apartment</option>
+                    <option value="duplex">Duplex</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Price per year (₦)</label>
+                <input type="number" name="price" placeholder="e.g. 150000" required>
+            </div>
+
+            <div class="form-group">
+                <label>Location / Address</label>
+                <input type="text" name="location" placeholder="e.g. Eguare, Ekpoma" required>
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea name="description" placeholder="Describe the property — size, facilities, distance from campus..." required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>WhatsApp number</label>
+                <input type="text" name="whatsapp_number" placeholder="e.g. 2348012345678" required>
+            </div>
+
+            <div class="form-group">
+                <label>Property photos</label>
+                <input type="file" name="images" multiple accept="image/*" style="background: #fffdf7; padding: 10px;">
+                <p style="font-size: 12px; color: #9a9488; margin-top: 6px;">You can select multiple photos at once.</p>
+            </div>
+
+            <button type="submit" class="btn btn-primary auth-btn">Submit listing</button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

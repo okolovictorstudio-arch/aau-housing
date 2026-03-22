@@ -789,3 +789,121 @@ footer strong {
         font-size: 12px;
     }
 }
+
+/* ── Auth pages ── */
+.auth-card {
+    background: #fffdf7;
+    border: 1px solid #e4ddd0;
+    border-radius: 16px;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+}
+
+.auth-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.auth-sub {
+    font-size: 14px;
+    color: #9a9488;
+    margin-bottom: 28px;
+}
+
+.auth-error {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #b91c1c;
+    font-size: 13px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1c1c1a;
+    margin-bottom: 6px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 11px 14px;
+    border: 1.5px solid #e4ddd0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    background: #f5f0e8;
+    color: #1c1c1a;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    border-color: #2d6a4f;
+    background: #fff;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.auth-btn {
+    width: 100%;
+    text-align: center;
+    padding: 13px;
+    font-size: 15px;
+    margin-top: 4px;
+}
+
+.auth-switch {
+    text-align: center;
+    font-size: 13px;
+    color: #9a9488;
+    margin-top: 20px;
+}
+
+.auth-switch a {
+    color: #2d6a4f;
+    font-weight: 500;
+}
+
+/* ── Dashboard ── */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+@media (max-width: 430px) {
+    .auth-card {
+        padding: 24px 18px;
+    }
+
+    .auth-title {
+        font-size: 20px;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+    }
+}
+
+.status-approved { color: #2d6a4f; font-weight: 600; }
+.status-pending { color: #b0a898; }

@@ -19,9 +19,15 @@
     </form>
 
     <div class="nav-links">
-        <a href="/listings/">Browse</a>
-        <a href="#" class="btn btn-primary">List your property</a>
-    </div>
+    <a href="/listings/">Browse</a>
+    {% if user.is_authenticated %}
+        <a href="/accounts/dashboard/">Dashboard</a>
+        <a href="/accounts/logout/" class="btn btn-outline">Log out</a>
+    {% else %}
+        <a href="/accounts/login/">Log in</a>
+        <a href="/accounts/register/" class="btn btn-primary">List your property</a>
+    {% endif %}
+</div>
 
     <button class="hamburger" onclick="toggleMenu()">
         <span></span>
@@ -36,7 +42,13 @@
         <button type="submit">&#128269;</button>
     </form>
     <a href="/listings/">Browse listings</a>
-    <a href="#" class="btn btn-primary" style="text-align:center;">List your property</a>
+    {% if user.is_authenticated %}
+        <a href="/accounts/dashboard/">My dashboard</a>
+        <a href="/accounts/logout/">Log out</a>
+    {% else %}
+        <a href="/accounts/login/">Log in</a>
+        <a href="/accounts/register/" class="btn btn-primary" style="text-align:center;">List your property</a>
+    {% endif %}
 </div>
 
 <script>

@@ -1,0 +1,59 @@
+{% extends 'listings/base.html' %}
+
+{% block content %}
+
+<div class="section">
+    <div class="container">
+
+        <div class="dashboard-header">
+            <div>
+                <h1 class="section-title">My listings</h1>
+                <p class="section-sub">Welcome back, {{ request.user.username }}</p>
+            </div>
+            <a href="/accounts/listing/add/" class="btn btn-primary">+ Add new listing</a>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div class="auth-error" style="margin-bottom: 16px;">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
+        {% if listings %}
+        <div class="listing-grid">
+            {% for listing in listings %}
+            <div class="listing-card">
+                <div class="card-image">
+                    {% if listing.images.first %}
+                        <img src="{{ listing.images.first.image.url }}" alt="{{ listing.title }}">
+                    {% else %}
+                        <span class="card-image-placeholder">No photo yet</span>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    <div class="card-meta">
+                        <span class="card-badge">{{ listing.get_property_type_display }}</span>
+                        <span class="card-date {% if listing.is_approved %}status-approved{% else %}status-pending{% endif %}">
+    {% if listing.is_approved %}Approved{% else %}Pending{% endif %}
+</span>
+                            {% if listing.is_approved %}Approved{% else %}Pending{% endif %}
+                        </span>
+                    </div>
+                    <p class="card-title">{{ listing.title }}</p>
+                    <p class="card-location">{{ listing.location }}</p>
+                    <p class="card-price">₦{{ listing.price|floatformat:0 }}<span>/year</span></p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>You have no listings yet.</p>
+            <a href="/accounts/listing/add/" class="btn btn-primary">Add your first listing</a>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
