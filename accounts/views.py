@@ -118,7 +118,7 @@ def initiate_payment(request):
     data = {
         'email': request.user.email,
         'amount': 300000,
-        'callback_url': 'http://127.0.0.1:8000/accounts/payment/verify/',
+        'callback_url': 'https://aau-housing-production.up.railway.app/accounts/payment/verify/',
         'metadata': {
             'user_id': request.user.id,
         }
