@@ -1,0 +1,50 @@
+{% extends 'listings/base.html' %}
+
+{% block content %}
+
+<div class="detail-wrap">
+    <div class="container" style="max-width: 800px;">
+
+        <a href="/listings/" class="back-link">← Back to listings</a>
+
+        <div class="detail-hero-img">
+            {% if listing.images.first %}
+                <img src="{{ listing.images.first.image.url }}" alt="{{ listing.title }}">
+            {% else %}
+                <span class="card-image-placeholder">No photos uploaded</span>
+            {% endif %}
+        </div>
+
+        {% if listing.images.count > 1 %}
+        <div class="detail-thumbnails">
+            {% for image in listing.images.all %}
+            <img src="{{ image.image.url }}" alt="photo">
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="detail-header">
+            <div>
+                <span class="card-badge">{{ listing.get_property_type_display }}</span>
+                <h1 style="font-size: 28px; margin-top: 12px; margin-bottom: 6px;">{{ listing.title }}</h1>
+                <p class="card-location">{{ listing.location }}</p>
+            </div>
+            <div>
+                <p class="detail-price">₦{{ listing.price|floatformat:0 }}</p>
+                <p class="detail-price-label">per year</p>
+            </div>
+        </div>
+
+        <div class="detail-description">
+            <h2>About this property</h2>
+            <p>{{ listing.description }}</p>
+        </div>
+
+        <a href="https://wa.me/{{ listing.whatsapp_number }}" target="_blank" class="whatsapp-btn">
+            Contact agent on WhatsApp
+        </a>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AAU Housing — Find Your Space</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'listings/style.css' %}">
+</head>
+<body>
+
+<nav class="navbar">
+    <a href="/" class="nav-logo">AAU<span>Housing</span></a>
+
+    <form class="nav-search" action="/listings/" method="GET">
+        <input type="text" name="search" placeholder="Search location, type..." value="">
+        <button type="submit">&#128269;</button>
+    </form>
+
+    <div class="nav-links">
+        <a href="/listings/">Browse</a>
+        <a href="#" class="btn btn-primary">List your property</a>
+    </div>
+
+    <button class="hamburger" onclick="toggleMenu()">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+    <form class="mobile-search" action="/listings/" method="GET">
+        <input type="text" name="search" placeholder="Search listings...">
+        <button type="submit">&#128269;</button>
+    </form>
+    <a href="/listings/">Browse listings</a>
+    <a href="#" class="btn btn-primary" style="text-align:center;">List your property</a>
+</div>
+
+<script>
+function toggleMenu() {
+    document.getElementById('mobileMenu').classList.toggle('open');
+}
+</script>
+
+{% block content %}{% endblock %}
+
+<footer>
+    <strong>AAUHousing</strong> &mdash; The easiest way to find a place near Ambrose Alli University.<br>
+    Built for students, by Okolo Victor &copy; 2026
+</footer>
+
+</body>
+</html>

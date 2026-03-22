@@ -1,0 +1,56 @@
+{% extends 'listings/base.html' %}
+
+{% block content %}
+
+<section class="hero">
+    <div class="container">
+        <p class="hero-label">Ekpoma's #1 student housing platform</p>
+        <h1>Find your space<br>near AAU</h1>
+        <p>Self-contains, single rooms, flats — all verified listings close to campus. No stress, no middleman drama.</p>
+        <a href="/listings/" class="btn btn-primary" style="font-size: 16px; padding: 14px 32px;">Browse available rooms</a>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">Available now</h2>
+        <p class="section-sub">Recently approved listings near campus</p>
+
+        {% if featured %}
+        <div class="listing-grid">
+            {% for listing in featured %}
+            <a href="/listings/{{ listing.pk }}/">
+                <div class="listing-card">
+                    <div class="card-image">
+                        {% if listing.images.first %}
+                            <img src="{{ listing.images.first.image.url }}" alt="{{ listing.title }}">
+                        {% else %}
+                            <span class="card-image-placeholder">No photo yet</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="card-badge">{{ listing.get_property_type_display }}</span>
+                            <span class="card-date">{{ listing.created_at|date:"M d" }}</span>
+                        </div>
+                        <p class="card-title">{{ listing.title }}</p>
+                        <p class="card-location">{{ listing.location }}</p>
+                        <p class="card-price">₦{{ listing.price|floatformat:0 }}<span>/year</span></p>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No listings yet — check back soon.</p>
+        </div>
+        {% endif %}
+
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="/listings/" class="btn btn-outline">See all listings</a>
+        </div>
+    </div>
+</section>
+
+{% endblock %}

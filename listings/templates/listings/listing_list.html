@@ -1,0 +1,66 @@
+{% extends 'listings/base.html' %}
+
+{% block content %}
+
+<div class="filter-bar">
+    <div class="container">
+        <h1>All listings</h1>
+        <div class="filter-row">
+            <form method="GET" class="filter-form">
+                <input type="hidden" name="search" value="{{ request.GET.search }}">
+                <select name="type" class="filter-select" onchange="this.form.submit()">
+                    <option value="">All types</option>
+                    <option value="self_con" {% if request.GET.type == 'self_con' %}selected{% endif %}>Self Contain</option>
+                    <option value="single_room" {% if request.GET.type == 'single_room' %}selected{% endif %}>Single Room</option>
+                    <option value="flat" {% if request.GET.type == 'flat' %}selected{% endif %}>Flat / Apartment</option>
+                    <option value="duplex" {% if request.GET.type == 'duplex' %}selected{% endif %}>Duplex</option>
+                </select>
+            </form>
+
+            {% if request.GET.search %}
+            <p class="search-result-label">
+                Results for <strong>"{{ request.GET.search }}"</strong>
+                <a href="/listings/" class="clear-search">✕ Clear</a>
+            </p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="container">
+        {% if listings %}
+        <div class="listing-grid">
+            {% for listing in listings %}
+            <a href="/listings/{{ listing.pk }}/">
+                <div class="listing-card">
+                    <div class="card-image">
+                        {% if listing.images.first %}
+                            <img src="{{ listing.images.first.image.url }}" alt="{{ listing.title }}">
+                        {% else %}
+                            <span class="card-image-placeholder">No photo yet</span>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <div class="card-meta">
+                            <span class="card-badge">{{ listing.get_property_type_display }}</span>
+                            <span class="card-date">{{ listing.created_at|date:"M d" }}</span>
+                        </div>
+                        <p class="card-title">{{ listing.title }}</p>
+                        <p class="card-location">{{ listing.location }}</p>
+                        <p class="card-price">₦{{ listing.price|floatformat:0 }}<span>/year</span></p>
+                    </div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <p>No listings found{% if request.GET.search %} for "{{ request.GET.search }}"{% endif %}.</p>
+            <a href="/listings/" class="btn btn-outline">Clear filters</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
