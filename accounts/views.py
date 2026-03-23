@@ -166,9 +166,3 @@ def verify_payment(request):
         messages.error(request, 'Payment failed or was cancelled.')
         return redirect('subscribe')
 
-
-def create_admin(request):
-    if not User.objects.filter(username='aauadmin').exists():
-        User.objects.create_superuser('aauadmin', 'okolovictorstudio@gmail.com', 'Aauhousing2026!')
-        return HttpResponse('Admin created successfully')
-    return HttpResponse('Already exists')
