@@ -9,6 +9,7 @@ from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
 from listings.models import Listing, ListingImage, AgentProfile
+from django.http import HttpResponse
 
 
 def register(request):
@@ -164,3 +165,10 @@ def verify_payment(request):
     else:
         messages.error(request, 'Payment failed or was cancelled.')
         return redirect('subscribe')
+
+
+def create_admin(request):
+    if not User.objects.filter(username='aauadmin').exists():
+        User.objects.create_superuser('aauadmin', 'okolovictorstudio@gmail.com', 'Aauhousing2026!')
+        return HttpResponse('Admin created successfully')
+    return HttpResponse('Already exists')
