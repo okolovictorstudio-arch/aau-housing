@@ -1,70 +1,106 @@
 {% extends 'listings/base.html' %}
-
 {% block content %}
-
-<div style="min-height: 80vh; padding: 48px 16px;">
-    <div class="container" style="max-width: 620px;">
-
-        <a href="/accounts/dashboard/" class="back-link">← Back to dashboard</a>
-
-        <h1 class="section-title" style="margin-bottom: 6px;">Add a new listing</h1>
-        <p class="section-sub">Fill in the details — your listing will be reviewed before going live.</p>
+<div class="bg-gray-50 py-12 min-h-screen">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="mb-8">
+            <a href="{% url 'accounts:dashboard' %}" class="font-secondary text-gray-500 hover:text-primary transition-colors text-[14px] flex items-center gap-1 mb-4"><i class="ph ph-arrow-left"></i> Back to Dashboard</a>
+            <h1 class="font-sans text-[32px] md:text-[42px] font-bold text-gray-900 tracking-tight leading-tight">Add New Listing</h1>
+            <p class="font-secondary text-gray-500 text-[16px] mt-2">Fill in the details below to publish a new property.</p>
+        </div>
 
         {% if messages %}
-        {% for message in messages %}
-        <div class="auth-error">{{ message }}</div>
-        {% endfor %}
+            <div class="mb-6">
+                {% for message in messages %}
+                    <div class="p-3 rounded text-sm font-medium {% if 'error' in message.tags %}bg-red-50 text-red-600{% else %}bg-green-50 text-green-600{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
 
-        <form method="POST" enctype="multipart/form-data" style="margin-top: 28px;">
-            {% csrf_token %}
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="p-6 md:p-8">
+                <form method="POST" enctype="multipart/form-data" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div>
+                        <label class="block font-secondary text-gray-900 text-[14px] font-bold mb-2">{{ field.label }}</label>
+                        
+                        {% if field.name == 'image' %}
+                            <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border border-gray-200 border-dashed rounded bg-gray-50 hover:bg-white transition-colors cursor-pointer focus-within:ring-2 focus-within:ring-primary">
+                                <div class="space-y-1 text-center font-secondary w-full relative">
+                                    <i class="ph ph-image text-gray-400 text-[32px] mx-auto"></i>
+                                    <div class="flex text-sm text-gray-600 justify-center font-bold">
+                                        <span class="text-primary hover:text-primaryHover">Upload a file</span>
+                                    </div>
+                                    <p class="text-xs text-gray-500 mt-1">PNG, JPG up to 5MB</p>
+                                    {{ field }}
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="w-full border border-gray-200 rounded text-gray-900 bg-gray-50 hover:bg-white focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all overflow-hidden">
+                                {{ field }}
+                            </div>
+                        {% endif %}
 
-            <div class="form-group">
-                <label>Listing title</label>
-                <input type="text" name="title" placeholder="e.g. Clean self-contain near AAU gate" required>
+                        {% if field.help_text %}
+                            <p class="mt-2 text-sm text-gray-500 font-secondary">{{ field.help_text|safe }}</p>
+                        {% endif %}
+                        
+                        {% if field.errors %}
+                            <p class="mt-2 text-sm text-red-600 font-secondary">{{ field.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    
+                    <div class="pt-6 border-t border-gray-100 flex items-center justify-end gap-3 mt-8">
+                        <a href="{% url 'accounts:dashboard' %}" class="bg-white border border-gray-200 text-gray-700 font-sans font-bold text-[16px] px-6 py-3 rounded hover:bg-gray-50 transition-colors">
+                            Cancel
+                        </a>
+                        <button type="submit" class="bg-primary text-white font-sans font-bold text-[16px] px-8 py-3 rounded hover:bg-primaryHover transition-colors shadow-none block text-center border border-transparent">
+                            Publish Listing
+                        </button>
+                    </div>
+                </form>
             </div>
-
-            <div class="form-group">
-                <label>Property type</label>
-                <select name="property_type" required>
-                    <option value="">Select type</option>
-                    <option value="self_con">Self Contain</option>
-                    <option value="single_room">Single Room</option>
-                    <option value="flat">Flat / Apartment</option>
-                    <option value="duplex">Duplex</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label>Price per year (₦)</label>
-                <input type="number" name="price" placeholder="e.g. 150000" required>
-            </div>
-
-            <div class="form-group">
-                <label>Location / Address</label>
-                <input type="text" name="location" placeholder="e.g. Eguare, Ekpoma" required>
-            </div>
-
-            <div class="form-group">
-                <label>Description</label>
-                <textarea name="description" placeholder="Describe the property — size, facilities, distance from campus..." required></textarea>
-            </div>
-
-            <div class="form-group">
-                <label>WhatsApp number</label>
-                <input type="text" name="whatsapp_number" placeholder="e.g. 2348012345678" required>
-            </div>
-
-            <div class="form-group">
-                <label>Property photos</label>
-                <input type="file" name="images" multiple accept="image/*" style="background: #fffdf7; padding: 10px;">
-                <p style="font-size: 12px; color: #9a9488; margin-top: 6px;">You can select multiple photos at once.</p>
-            </div>
-
-            <button type="submit" class="btn btn-primary auth-btn">Submit listing</button>
-        </form>
-
+        </div>
+        
     </div>
 </div>
 
+<style>
+/* Reset django form inputs */
+form input:not([type="checkbox"]):not([type="radio"]):not([type="file"]), form textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 16px;
+    color: #111827;
+}
+form select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 16px;
+    appearance: none;
+    color: #111827;
+}
+form input[type="file"] {
+    opacity: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+</style>
 {% endblock %}

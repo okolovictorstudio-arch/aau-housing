@@ -1,41 +1,75 @@
 {% extends 'listings/base.html' %}
 
 {% block content %}
-
-<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 40px 16px;">
-    <div class="auth-card">
-        <h1 class="auth-title">Create agent account</h1>
-        <p class="auth-sub">List your properties and reach AAU students</p>
+<div class="bg-gray-50 py-16 min-h-[80vh] flex items-center justify-center">
+    <div class="w-full max-w-md mx-auto bg-white rounded-lg shadow-sm border border-gray-200 p-8 md:p-12 mt-8 mb-8">
+        <div class="text-center mb-8">
+            <h2 class="font-sans text-[32px] font-bold text-gray-900 tracking-tight leading-tight mb-2">Create Account</h2>
+            <p class="font-secondary text-[16px] text-gray-500">Join Cradle to find or list properties</p>
+        </div>
 
         {% if messages %}
-        {% for message in messages %}
-        <div class="auth-error">{{ message }}</div>
-        {% endfor %}
+            <div class="mb-6">
+                {% for message in messages %}
+                    <div class="p-3 rounded text-sm font-medium {% if 'error' in message.tags %}bg-red-50 text-red-600{% else %}bg-green-50 text-green-600{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
 
-        <form method="POST" action="/accounts/register/">
+        <form method="POST" class="flex flex-col gap-4">
             {% csrf_token %}
-            <div class="form-group">
-                <label>Username</label>
-                <input type="text" name="username" placeholder="e.g. victor_agent" required>
-            </div>
-            <div class="form-group">
-                <label>Email</label>
-                <input type="email" name="email" placeholder="your@email.com" required>
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" name="password1" placeholder="Create a password" required>
-            </div>
-            <div class="form-group">
-                <label>Confirm password</label>
-                <input type="password" name="password2" placeholder="Repeat password" required>
-            </div>
-            <button type="submit" class="btn btn-primary auth-btn">Create account</button>
+            {% for field in form %}
+                <div>
+                    <label class="block font-secondary text-gray-700 text-[14px] font-bold mb-2">{{ field.label }}</label>
+                    <div class="w-full border border-gray-200 rounded bg-gray-50 hover:bg-white focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all">
+                        {{ field }}
+                    </div>
+                    {% if field.help_text %}
+                        <p class="text-gray-500 text-xs mt-1 font-secondary">{{ field.help_text|safe }}</p>
+                    {% endif %}
+                    {% if field.errors %}
+                        <p class="text-red-500 text-xs mt-1 font-secondary">{{ field.errors.0 }}</p>
+                    {% endif %}
+                </div>
+            {% endfor %}
+            
+            <button type="submit" class="w-full bg-primary text-white font-sans font-bold text-[16px] px-4 py-3 rounded hover:bg-primaryHover transition-colors mt-4 text-center block shadow-sm border border-transparent">
+                Create Account
+            </button>
         </form>
 
-        <p class="auth-switch">Already have an account? <a href="/accounts/login/">Log in</a></p>
+
+
+        <div class="mt-8 text-center">
+            <p class="font-secondary text-gray-600 text-[14px]">Already have an account? <a href="/accounts/login/" class="text-primary hover:text-primaryHover font-bold transition-colors">Log in</a></p>
+        </div>
     </div>
 </div>
 
+<style>
+/* Reset django form inputs */
+form input:not([type="checkbox"]):not([type="radio"]) {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 16px;
+    color: #111827;
+}
+form select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-family: 'Satoshi', sans-serif;
+    font-size: 16px;
+    appearance: none;
+    color: #111827;
+}
+</style>
 {% endblock %}

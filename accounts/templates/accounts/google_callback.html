@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Google Sign In Callback</title>
+</head>
+<body>
+    <script>
+        const hash = window.location.hash.substring(1);
+        const params = new URLSearchParams(hash);
+        const idToken = params.get('id_token');
+        
+        if (idToken) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '/accounts/google-login/';
+            
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'credential';
+            input.value = idToken;
+            form.appendChild(input);
+            
+            document.body.appendChild(form);
+            form.submit();
+        } else {
+            const error = params.get('error');
+            window.location.href = '/accounts/login/?error=' + (error || 'auth_failed');
+        }
+    </script>
+</body>
+</html>

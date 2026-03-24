@@ -1,49 +1,77 @@
 {% extends 'listings/base.html' %}
-
 {% block content %}
-
-<div style="min-height: 80vh; display: flex; align-items: center; justify-content: center; padding: 40px 16px;">
-    <div class="auth-card" style="max-width: 480px; text-align: center;">
-
-        <div style="font-size: 40px; margin-bottom: 16px;">🏠</div>
-        <h1 class="auth-title">List your properties</h1>
-        <p class="auth-sub">Get your properties in front of hundreds of AAU students every month.</p>
+<div class="min-h-[80vh] py-16 bg-gray-50 flex items-center justify-center">
+    <div class="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center">
+        
+        <div class="text-center mb-12 max-w-2xl">
+            <span class="inline-flex items-center justify-center w-20 h-20 rounded-[2rem] bg-indigo-50 text-primary text-[42px] mb-6 shadow-sm rotate-3 border-2 border-white">
+                <i class="ph ph-house -rotate-3"></i>
+            </span>
+            <h1 class="font-sans text-[42px] md:text-[52px] font-bold text-gray-900 tracking-tight mb-4 leading-tight">List Your Properties</h1>
+            <p class="font-secondary text-[18px] text-gray-600 font-medium">Get your properties in front of hundreds of students easily.</p>
+        </div>
 
         {% if messages %}
-        {% for message in messages %}
-        <div class="auth-error" style="text-align: left;">{{ message }}</div>
-        {% endfor %}
+            <div class="mb-8 w-full max-w-lg">
+                {% for message in messages %}
+                    <div class="p-4 rounded text-[14px] font-medium {% if 'error' in message.tags %}bg-red-50 text-red-700 border border-red-200{% else %}bg-green-50 text-green-700 border border-green-200{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
 
-        <div style="background: #f5f0e8; border-radius: 12px; padding: 24px; margin: 24px 0; text-align: left;">
-            <p style="font-size: 13px; font-weight: 600; color: #2d6a4f; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px;">What you get</p>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <div style="display: flex; gap: 10px; font-size: 14px; color: #1c1c1a;">
-                    <span style="color: #2d6a4f; font-weight: 700;">✓</span> Unlimited listing uploads
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 w-full max-w-4xl flex flex-col md:flex-row overflow-hidden hover:shadow-md transition-shadow">
+            <!-- Details Side -->
+            <div class="w-full md:w-3/5 p-10 md:p-14 lg:p-16">
+                <h3 class="font-sans text-[16px] font-bold text-primary tracking-widest uppercase mb-8 border-b border-gray-100 pb-4">Agent Benefits</h3>
+                
+                <div class="space-y-6">
+                    <div class="flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-indigo-50 text-primary flex items-center justify-center shrink-0 mt-0.5"><i class="ph ph-check text-[16px] font-bold"></i></div>
+                        <div>
+                            <h4 class="font-sans font-bold text-[24px] text-gray-900 mb-1">Unlimited Listings</h4>
+                            <p class="font-secondary text-gray-500 text-[16px]">Upload as many properties as you want.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-indigo-50 text-primary flex items-center justify-center shrink-0 mt-0.5"><i class="ph ph-check text-[16px] font-bold"></i></div>
+                        <div>
+                            <h4 class="font-sans font-bold text-[24px] text-gray-900 mb-1">Direct WhatsApp Leads</h4>
+                            <p class="font-secondary text-gray-500 text-[16px]">Students message you directly on your phone.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start gap-4">
+                        <div class="w-8 h-8 rounded-full bg-indigo-50 text-primary flex items-center justify-center shrink-0 mt-0.5"><i class="ph ph-check text-[16px] font-bold"></i></div>
+                        <div>
+                            <h4 class="font-sans font-bold text-[24px] text-gray-900 mb-1">Dashboard Management</h4>
+                            <p class="font-secondary text-gray-500 text-[16px]">Track and update your listings easily.</p>
+                        </div>
+                    </div>
                 </div>
-                <div style="display: flex; gap: 10px; font-size: 14px; color: #1c1c1a;">
-                    <span style="color: #2d6a4f; font-weight: 700;">✓</span> Direct WhatsApp contact from students
-                </div>
-                <div style="display: flex; gap: 10px; font-size: 14px; color: #1c1c1a;">
-                    <span style="color: #2d6a4f; font-weight: 700;">✓</span> 30 days visibility on AAUHousing
-                </div>
-                <div style="display: flex; gap: 10px; font-size: 14px; color: #1c1c1a;">
-                    <span style="color: #2d6a4f; font-weight: 700;">✓</span> Agent dashboard to manage listings
+            </div>
+
+            <!-- Pricing Side -->
+            <div class="w-full md:w-2/5 bg-gray-900 text-white p-10 md:p-14 lg:p-16 flex flex-col justify-center relative overflow-hidden border-l-8 border-primary">
+                
+                <div class="relative z-10">
+                    <p class="text-gray-400 font-sans font-bold uppercase tracking-wider text-[14px] mb-4">Subscription Plan</p>
+                    <div class="mb-8">
+                        <span class="font-sans text-[52px] font-bold tracking-tight text-white leading-none">₦3,000</span>
+                        <span class="font-secondary text-gray-400 text-[16px] font-medium ml-1">/month</span>
+                    </div>
+                    
+                    <a href="/accounts/payment/initiate/" class="block w-full bg-primary hover:bg-primaryHover text-white text-center py-4 rounded font-sans font-bold text-[16px] transition-colors mb-6 shadow-sm border border-transparent">
+                        Pay with Paystack
+                    </a>
+                    
+                    <div class="flex items-center justify-center gap-2 font-secondary text-gray-400 text-[14px] font-medium">
+                        <i class="ph ph-shield-check text-green-400 text-[18px]"></i> Secured payment. Cancel anytime.
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div style="margin-bottom: 24px;">
-            <p style="font-size: 36px; font-weight: 700; color: #1c1c1a;">₦3,000</p>
-            <p style="font-size: 13px; color: #9a9488;">per month</p>
-        </div>
-
-        <a href="/accounts/payment/initiate/" class="btn btn-primary" style="width: 100%; text-align: center; padding: 14px; font-size: 16px; display: block;">
-            Pay with Paystack
-        </a>
-
-        <p style="font-size: 12px; color: #b0a898; margin-top: 16px;">Secured by Paystack. Cancel anytime.</p>
     </div>
 </div>
-
 {% endblock %}

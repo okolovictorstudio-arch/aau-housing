@@ -1,59 +1,158 @@
 {% extends 'listings/base.html' %}
-
 {% block content %}
-
-<div class="section">
-    <div class="container">
-
-        <div class="dashboard-header">
+<div class="bg-gray-50 min-h-screen py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
             <div>
-                <h1 class="section-title">My listings</h1>
-                <p class="section-sub">Welcome back, {{ request.user.username }}</p>
+                <h1 class="font-sans text-[32px] md:text-[42px] font-bold text-gray-900 tracking-tight leading-tight">Agent Dashboard</h1>
+                <p class="font-secondary text-gray-500 text-[16px] mt-1">Manage your properties and subscription</p>
             </div>
-            <a href="/accounts/listing/add/" class="btn btn-primary">+ Add new listing</a>
+            <a href="{% url 'listings:add_listing' %}" class="bg-primary text-white font-sans font-bold text-[16px] px-6 py-3 rounded hover:bg-primaryHover transition-colors shrink-0 shadow-sm border border-transparent flex items-center gap-2">
+                <i class="ph ph-plus"></i> Add New Listing
+            </a>
         </div>
 
         {% if messages %}
-        {% for message in messages %}
-        <div class="auth-error" style="margin-bottom: 16px;">{{ message }}</div>
-        {% endfor %}
+            <div class="mb-8">
+                {% for message in messages %}
+                    <div class="p-4 rounded text-[14px] font-medium {% if 'error' in message.tags %}bg-red-50 text-red-600 border border-red-100{% else %}bg-green-50 text-green-600 border border-green-100{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
         {% endif %}
 
-        {% if listings %}
-        <div class="listing-grid">
-            {% for listing in listings %}
-            <div class="listing-card">
-                <div class="card-image">
-                    {% if listing.images.first %}
-                        <img src="{{ listing.images.first.image.url }}" alt="{{ listing.title }}">
-                    {% else %}
-                        <span class="card-image-placeholder">No photo yet</span>
-                    {% endif %}
-                </div>
-                <div class="card-body">
-                    <div class="card-meta">
-                        <span class="card-badge">{{ listing.get_property_type_display }}</span>
-                        <span class="card-date {% if listing.is_approved %}status-approved{% else %}status-pending{% endif %}">
-    {% if listing.is_approved %}Approved{% else %}Pending{% endif %}
-</span>
-                            {% if listing.is_approved %}Approved{% else %}Pending{% endif %}
-                        </span>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+            <!-- Profile Card -->
+            <div class="bg-white rounded-lg p-6 shadow-sm border border-gray-200">
+                <div class="flex items-center gap-4 mb-6">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-primary text-[24px]">
+                        <i class="ph ph-user"></i>
                     </div>
-                    <p class="card-title">{{ listing.title }}</p>
-                    <p class="card-location">{{ listing.location }}</p>
-                    <p class="card-price">₦{{ listing.price|floatformat:0 }}<span>/year</span></p>
+                    <div>
+                        <h2 class="font-sans font-bold text-[24px] text-gray-900">{{ user.first_name }} {{ user.last_name }}</h2>
+                        <p class="font-secondary text-gray-500 text-[14px]">{{ user.email }}</p>
+                    </div>
+                </div>
+                <div class="space-y-3 font-secondary text-[16px]">
+                    <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span class="text-gray-500">Phone</span>
+                        <span class="font-medium text-gray-900">{{ agent_profile.phone_number }}</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-50">
+                        <span class="text-gray-500">Total Listings</span>
+                        <span class="font-medium text-gray-900">{{ listings.count }}</span>
+                    </div>
                 </div>
             </div>
-            {% endfor %}
+
+            <!-- Subscription Card -->
+            <div class="lg:col-span-2 bg-white rounded-lg p-6 lg:p-8 shadow-sm border border-gray-200 flex flex-col justify-center relative overflow-hidden">
+                <h3 class="font-sans font-bold text-[24px] text-gray-900 mb-2">Subscription Status</h3>
+                
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-4">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            {% if agent_profile.subscription_status == 'active' %}
+                                <span class="bg-green-100 text-green-700 font-bold px-3 py-1 rounded text-[14px] flex items-center gap-1">
+                                    <i class="ph ph-check-circle"></i> Active
+                                </span>
+                            {% elif agent_profile.subscription_status == 'pending' %}
+                                <span class="bg-yellow-100 text-yellow-700 font-bold px-3 py-1 rounded text-[14px] flex items-center gap-1">
+                                    <i class="ph ph-clock"></i> Pending
+                                </span>
+                            {% else %}
+                                <span class="bg-red-100 text-red-700 font-bold px-3 py-1 rounded text-[14px] flex items-center gap-1">
+                                    <i class="ph ph-x-circle"></i> Expired
+                                </span>
+                            {% endif %}
+                        </div>
+                        <p class="font-secondary text-gray-500 text-[14px]">
+                            {% if agent_profile.subscription_status == 'active' %}
+                                Your listings are visible to all students.
+                            {% else %}
+                                Activate your subscription to make your listings visible.
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <div class="mt-4 sm:mt-0">
+                        {% if agent_profile.subscription_status != 'active' %}
+                            <a href="{% url 'accounts:subscribe' %}" class="bg-primary text-white font-sans font-bold text-[16px] px-6 py-3 rounded hover:bg-primaryHover transition-colors inline-block">
+                                Upgrade Plan
+                            </a>
+                        {% else %}
+                            <div class="text-right">
+                                <p class="text-xs font-secondary text-gray-400 mb-1">Plan</p>
+                                <p class="font-sans font-bold text-[18px] text-gray-900">Standard Access</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
-        {% else %}
-        <div class="empty-state">
-            <p>You have no listings yet.</p>
-            <a href="/accounts/listing/add/" class="btn btn-primary">Add your first listing</a>
+
+        <!-- Listings Section -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                <h3 class="font-sans font-bold text-[24px] text-gray-900">Your Properties</h3>
+            </div>
+            
+            {% if listings %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left font-secondary text-[16px]">
+                    <thead class="bg-white text-gray-500 border-b border-gray-100 text-[14px] uppercase tracking-wider">
+                        <tr>
+                            <th class="px-6 py-4 font-bold">Property</th>
+                            <th class="px-6 py-4 font-bold">Price</th>
+                            <th class="px-6 py-4 font-bold">Status</th>
+                            <th class="px-6 py-4 font-bold text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-50 text-gray-800">
+                        {% for listing in listings %}
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-4">
+                                <p class="font-sans font-bold text-gray-900">{{ listing.title|truncatechars:40 }}</p>
+                                <p class="text-[14px] text-gray-500">{{ listing.location|truncatechars:30 }}</p>
+                            </td>
+                            <td class="px-6 py-4 font-medium">₦{{ listing.price|floatformat:0 }}</td>
+                            <td class="px-6 py-4">
+                                {% if listing.status == 'available' %}
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                                        Available
+                                    </span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                        Rented
+                                    </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <a href="{% url 'listings:listing_detail' listing.pk %}" class="text-primary hover:text-primaryHover font-medium text-[14px] flex items-center justify-end gap-1 transition-colors">
+                                    <i class="ph ph-eye"></i> View
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="px-6 py-16 text-center">
+                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center text-gray-400 mx-auto mb-4 text-[32px]">
+                    <i class="ph ph-house"></i>
+                </div>
+                <h4 class="font-sans font-bold text-[24px] text-gray-900 mb-2">No properties yet</h4>
+                <p class="font-secondary text-[16px] text-gray-500 mb-6 max-w-sm mx-auto">You haven't added any listings to Cradle yet. Start by adding your first property.</p>
+                <a href="{% url 'listings:add_listing' %}" class="bg-primary text-white font-sans font-bold text-[16px] px-6 py-3 rounded hover:bg-primaryHover transition-colors inline-block">
+                    Add First Listing
+                </a>
+            </div>
+            {% endif %}
         </div>
-        {% endif %}
 
     </div>
 </div>
-
 {% endblock %}

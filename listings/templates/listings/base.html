@@ -4,65 +4,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AAU Housing — Find Your Space</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'listings/style.css' %}">
+    <title>Cradle &mdash; Student Housing Easily</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600;700;800&family=Satoshi:wght@400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Favicon SVG -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23B01C89'/><text x='50%' y='50%' font-family='sans-serif' font-weight='bold' font-size='60' fill='white' dominant-baseline='central' text-anchor='middle'>C</text></svg>">
+    
+    <!-- External Icons Fallback (if specifically HugeIcons isn't working via CDN, Phosphor/Heroicons look similar) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: '#B01C89',
+              primaryHover: '#910f73',
+            },
+            fontFamily: {
+              sans: ['Raleway', 'sans-serif'],
+              secondary: ['Satoshi', 'sans-serif'],
+            },
+          },
+        },
+      }
+    </script>
+    <style>
+        body { font-family: 'Raleway', sans-serif; }
+    </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-900 antialiased flex flex-col min-h-screen">
 
-<nav class="navbar">
-    <a href="/" class="nav-logo">AAU<span>Housing</span></a>
+<!-- Navbar -->
+<nav class="bg-white shadow-md sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+    <a href="/" class="text-primary font-bold text-2xl tracking-tight">Cradle</a>
+    
+    <div class="hidden md:flex items-center space-x-6 text-gray-800 font-secondary text-[16px]">
+      <a href="/listings/" class="hover:text-primary transition-colors">Listings</a>
+      <a href="/accounts/subscribe/" class="hover:text-primary transition-colors">For Agents</a>
+      <a href="/support/" class="hover:text-primary transition-colors">Support</a>
+      
+      {% if user.is_authenticated %}
+          <a href="/accounts/dashboard/" class="hover:text-primary transition-colors">Dashboard</a>
+          <a href="/accounts/logout/" class="hover:text-primary transition-colors">Logout</a>
+      {% else %}
+          <a href="/accounts/login/" class="hover:text-primary transition-colors">Login</a>
+          <a href="/accounts/register/" class="bg-primary text-white px-5 py-2.5 rounded hover:bg-[#910f73] transition-colors font-medium">Sign Up</a>
+      {% endif %}
+    </div>
 
-    <form class="nav-search" action="/listings/" method="GET">
-        <input type="text" name="search" placeholder="Search location, type..." value="">
-        <button type="submit">&#128269;</button>
-    </form>
+    <!-- Mobile menu button -->
+    <div class="md:hidden flex items-center">
+        <button id="mobile-menu-btn" class="text-gray-600 hover:text-primary focus:outline-none">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+        </button>
+    </div>
+  </div>
 
-    <div class="nav-links">
-    <a href="/listings/">Browse</a>
-    {% if user.is_authenticated %}
-        <a href="/accounts/dashboard/">Dashboard</a>
-        <a href="/accounts/logout/" class="btn btn-outline">Log out</a>
-    {% else %}
-        <a href="/accounts/login/">Log in</a>
-        <a href="/accounts/register/" class="btn btn-primary">List your property</a>
-    {% endif %}
-</div>
-
-    <button class="hamburger" onclick="toggleMenu()">
-        <span></span>
-        <span></span>
-        <span></span>
-    </button>
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 shadow-lg absolute w-full left-0 z-50">
+      <div class="px-4 pt-4 pb-6 flex flex-col space-y-4 font-secondary text-[16px]">
+          <a href="/listings/" class="text-gray-800 hover:text-primary">Listings</a>
+          <a href="/accounts/subscribe/" class="text-gray-800 hover:text-primary">For Agents</a>
+          <a href="/support/" class="text-gray-800 hover:text-primary">Support</a>
+          {% if user.is_authenticated %}
+              <a href="/accounts/dashboard/" class="text-gray-800 hover:text-primary">Dashboard</a>
+              <a href="/accounts/logout/" class="text-gray-800 hover:text-primary">Logout</a>
+          {% else %}
+              <a href="/accounts/login/" class="text-gray-800 hover:text-primary">Login</a>
+              <a href="/accounts/register/" class="bg-primary text-white px-4 py-2.5 rounded text-center font-medium mt-2">Sign Up</a>
+          {% endif %}
+      </div>
+  </div>
 </nav>
 
-<div class="mobile-menu" id="mobileMenu">
-    <form class="mobile-search" action="/listings/" method="GET">
-        <input type="text" name="search" placeholder="Search listings...">
-        <button type="submit">&#128269;</button>
-    </form>
-    <a href="/listings/">Browse listings</a>
-    {% if user.is_authenticated %}
-        <a href="/accounts/dashboard/">My dashboard</a>
-        <a href="/accounts/logout/">Log out</a>
-    {% else %}
-        <a href="/accounts/login/">Log in</a>
-        <a href="/accounts/register/" class="btn btn-primary" style="text-align:center;">List your property</a>
-    {% endif %}
-</div>
+<!-- Main Content -->
+<main class="flex-grow">
+    {% block content %}{% endblock %}
+</main>
 
-<script>
-function toggleMenu() {
-    document.getElementById('mobileMenu').classList.toggle('open');
-}
-</script>
-
-{% block content %}{% endblock %}
-
-<footer>
-    <strong>AAUHousing</strong> &mdash; The easiest way to find a place near Ambrose Alli University.<br>
-    Built for students, by Okolo Victor &copy; 2026
+<!-- Footer -->
+<footer class="bg-white border-t border-gray-200 py-12 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div class="col-span-1 md:col-span-2">
+                <a href="/" class="text-primary font-bold text-2xl tracking-tight mb-4 inline-block">Cradle</a>
+                <p class="text-gray-500 font-secondary text-[16px] max-w-sm">
+                    Find student housing easily around AAU. Browse verified listings and contact trusted agents directly.
+                </p>
+            </div>
+            
+            <div>
+                <h4 class="font-sans font-bold text-[18px] text-gray-900 mb-4">Platform</h4>
+                <ul class="space-y-3 font-secondary text-[16px]">
+                    <li><a href="/about/" class="text-gray-600 hover:text-primary transition-colors">About</a></li>
+                    <li><a href="/listings/" class="text-gray-600 hover:text-primary transition-colors">Listings</a></li>
+                    <li><a href="/support/" class="text-gray-600 hover:text-primary transition-colors">Support</a></li>
+                </ul>
+            </div>
+            
+            <div>
+                <h4 class="font-sans font-bold text-[18px] text-gray-900 mb-4">Agents</h4>
+                <ul class="space-y-3 font-secondary text-[16px]">
+                    <li><a href="/accounts/register/" class="text-gray-600 hover:text-primary transition-colors">Agent Signup</a></li>
+                    <li><a href="/accounts/login/" class="text-gray-600 hover:text-primary transition-colors">Login</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="mt-12 pt-8 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center text-gray-500 font-secondary text-sm">
+            <p>&copy; 2026 Cradle. All rights reserved.</p>
+        </div>
+    </div>
 </footer>
 
+<script>
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    mobileMenuBtn.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>
 </body>
 </html>

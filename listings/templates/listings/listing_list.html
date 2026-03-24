@@ -1,66 +1,94 @@
 {% extends 'listings/base.html' %}
+{% load static %}
 
 {% block content %}
-
-<div class="filter-bar">
-    <div class="container">
-        <h1>All listings</h1>
-        <div class="filter-row">
-            <form method="GET" class="filter-form">
-                <input type="hidden" name="search" value="{{ request.GET.search }}">
-                <select name="type" class="filter-select" onchange="this.form.submit()">
-                    <option value="">All types</option>
-                    <option value="self_con" {% if request.GET.type == 'self_con' %}selected{% endif %}>Self Contain</option>
-                    <option value="single_room" {% if request.GET.type == 'single_room' %}selected{% endif %}>Single Room</option>
-                    <option value="flat" {% if request.GET.type == 'flat' %}selected{% endif %}>Flat / Apartment</option>
-                    <option value="duplex" {% if request.GET.type == 'duplex' %}selected{% endif %}>Duplex</option>
-                </select>
-            </form>
-
-            {% if request.GET.search %}
-            <p class="search-result-label">
-                Results for <strong>"{{ request.GET.search }}"</strong>
-                <a href="/listings/" class="clear-search">✕ Clear</a>
-            </p>
-            {% endif %}
-        </div>
-    </div>
-</div>
-
-<div class="section">
-    <div class="container">
-        {% if listings %}
-        <div class="listing-grid">
-            {% for listing in listings %}
-            <a href="/listings/{{ listing.pk }}/">
-                <div class="listing-card">
-                    <div class="card-image">
-                        {% if listing.images.first %}
-                            <img src="{{ listing.images.first.image.url }}" alt="{{ listing.title }}">
-                        {% else %}
-                            <span class="card-image-placeholder">No photo yet</span>
-                        {% endif %}
-                    </div>
-                    <div class="card-body">
-                        <div class="card-meta">
-                            <span class="card-badge">{{ listing.get_property_type_display }}</span>
-                            <span class="card-date">{{ listing.created_at|date:"M d" }}</span>
-                        </div>
-                        <p class="card-title">{{ listing.title }}</p>
-                        <p class="card-location">{{ listing.location }}</p>
-                        <p class="card-price">₦{{ listing.price|floatformat:0 }}<span>/year</span></p>
-                    </div>
+<!-- Search & Filter Bar -->
+<div class="bg-gray-50 border-b border-gray-200 sticky top-16 z-40 py-6">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <form method="GET" action="{% url 'listings:listing_list' %}" class="flex flex-col md:flex-row gap-4 items-center justify-between">
+            <div class="flex flex-wrap sm:flex-nowrap gap-4 w-full md:w-auto flex-grow">
+                <div class="relative w-full sm:w-[240px]">
+                  <i class="ph ph-map-pin absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-[18px]"></i>
+                  <input type="text" name="search" value="{{ search_query }}" placeholder="Location" class="border border-gray-200 rounded text-[16px] pl-11 pr-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary font-secondary text-gray-900 bg-white">
                 </div>
-            </a>
-            {% endfor %}
-        </div>
-        {% else %}
-        <div class="empty-state">
-            <p>No listings found{% if request.GET.search %} for "{{ request.GET.search }}"{% endif %}.</p>
-            <a href="/listings/" class="btn btn-outline">Clear filters</a>
-        </div>
-        {% endif %}
+                
+                <div class="relative w-full sm:w-[200px]">
+                  <i class="ph ph-house absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-[18px]"></i>
+                  <select name="type" class="border border-gray-200 rounded text-[16px] pl-11 pr-8 py-3 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary font-secondary text-gray-900 appearance-none bg-white cursor-pointer">
+                    <option value="">Property Type</option>
+                    <option value="self_con" {% if property_type == 'self_con' %}selected{% endif %}>Self Contain</option>
+                    <option value="single_room" {% if property_type == 'single_room' %}selected{% endif %}>Single Room</option>
+                    <option value="flat" {% if property_type == 'flat' %}selected{% endif %}>Flat</option>
+                    <option value="duplex" {% if property_type == 'duplex' %}selected{% endif %}>Duplex</option>
+                  </select>
+                  <i class="ph ph-caret-down absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 text-[16px] pointer-events-none"></i>
+                </div>
+
+                <div class="relative w-full sm:w-[180px]">
+                  <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-bold text-[16px]">₦</span>
+                  <input type="number" name="max_price" value="{{ max_price }}" placeholder="Max Price" class="border border-gray-200 rounded text-[16px] pl-9 pr-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary font-secondary text-gray-900 bg-white">
+                </div>
+            </div>
+            
+            <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3 shrink-0">
+                <button type="submit" class="bg-primary text-white font-sans font-bold text-[16px] px-8 py-3 rounded hover:bg-primaryHover transition-colors w-full sm:w-auto flex items-center justify-center gap-2">
+                    Search
+                </button>
+                <a href="{% url 'listings:listing_list' %}" class="bg-white border border-gray-200 text-gray-600 font-sans font-bold text-[16px] px-6 py-3 rounded hover:bg-gray-50 transition-colors w-full sm:w-auto flex items-center justify-center">
+                    Reset
+                </a>
+            </div>
+        </form>
     </div>
 </div>
 
+<!-- Listings Grid -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="font-sans font-bold text-[32px] text-gray-900">Available Properties</h1>
+        <p class="font-secondary text-gray-500 text-[16px]">{{ listings.count }} result{{ listings.count|pluralize }}</p>
+    </div>
+
+    {% if listings %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+        {% for listing in listings %}
+        <a href="{% url 'listings:listing_detail' listing.pk %}" class="group block">
+            <div class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300 h-full flex flex-col relative w-full">
+              
+              <div class="relative h-48 overflow-hidden bg-gray-100 shrink-0 border-b border-gray-100">
+                 {% if listing.images.first %}
+                    <img src="{{ listing.images.first.image.url }}" alt="{{ listing.title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                 {% else %}
+                    <div class="w-full h-full flex items-center justify-center text-gray-400">
+                       <i class="ph ph-image text-3xl"></i>
+                    </div>
+                 {% endif %}
+                 
+                 {% if listing.status == 'available' %}
+                 <span class="absolute top-3 left-3 bg-green-500 text-white text-[12px] font-bold uppercase tracking-wider px-2.5 py-1 rounded shadow-sm">
+                    Available
+                 </span>
+                 {% endif %}
+              </div>
+              
+              <div class="p-5 flex flex-col flex-grow">
+                <h3 class="font-sans font-bold text-[24px] text-gray-900 mb-2 leading-tight line-clamp-1 group-hover:text-primary transition-colors">{{ listing.title }}</h3>
+                <p class="font-secondary font-medium text-gray-700 text-[16px] mb-1">₦{{ listing.price|floatformat:0 }} <span class="text-sm font-normal text-gray-500">- {{ listing.get_property_type_display }}</span></p>
+                <p class="font-secondary text-[16px] text-gray-500 flex items-center gap-1 mt-auto pt-2">
+                    <i class="ph ph-map-pin mr-1"></i> <span class="truncate">{{ listing.location }}</span>
+                </p>
+              </div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-gray-50 border border-dashed border-gray-300 rounded-lg p-16 text-center max-w-2xl mx-auto my-12">
+        <i class="ph ph-magnifying-glass text-[42px] text-gray-400 mb-4"></i>
+        <h3 class="font-sans font-bold text-[32px] text-gray-900 mb-2 tracking-tight">No results found</h3>
+        <p class="font-secondary text-[18px] text-gray-500 mb-6">We couldn't find any properties matching your criteria.</p>
+        <a href="{% url 'listings:listing_list' %}" class="bg-primary text-white font-sans font-bold text-[16px] px-8 py-3 rounded hover:bg-primaryHover transition-colors inline-block">Clear Filters</a>
+    </div>
+    {% endif %}
+</div>
 {% endblock %}
