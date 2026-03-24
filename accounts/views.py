@@ -65,26 +65,22 @@ def forgot_password_request(request):
         email = request.POST.get('email')
         if not email:
             messages.error(request, 'Please provide an email.')
-            return redirect('accounts:forgot_password_request')
-            
+            return render(request, 'accounts/forgot_password.html')
         try:
             user = User.objects.get(email=email)
             reset_code = PasswordResetCode.generate_code(user)
             send_mail(
                 'Password Reset for Cradle',
                 f'Your verification code is: {reset_code.code}',
-                'support@cradle.com',
+                settings.DEFAULT_FROM_EMAIL,
                 [email],
                 fail_silently=False,
             )
-            # Render the verification form
             return render(request, 'accounts/forgot_password_verify.html', {'email': email})
         except User.DoesNotExist:
-            messages.error(request, 'No user found with this email.')
+            messages.error(request, 'No account found with this email.')
             return render(request, 'accounts/forgot_password.html')
-            
     return render(request, 'accounts/forgot_password.html')
-
 
 def forgot_password_verify(request):
     if request.method == 'POST':

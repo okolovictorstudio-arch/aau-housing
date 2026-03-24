@@ -2,30 +2,42 @@
 
 {% block content %}
 <div class="bg-gray-50 py-16 min-h-[80vh] flex items-center justify-center">
-    <div class="w-full max-w-lg mx-auto bg-white rounded-lg shadow-sm border border-gray-200 p-8 md:p-12">
-      <h2 class="font-sans text-[42px] font-bold mb-2 text-center text-gray-900 tracking-tight leading-tight">Contact Support</h2>
-      <p class="font-secondary text-[16px] text-gray-500 text-center mb-8">We usually respond within 24 hours.</p>
-      
-      <form class="flex flex-col gap-5">
-        <div>
-            <label class="block font-secondary text-gray-700 text-[14px] font-bold mb-2">Name</label>
-            <input type="text" placeholder="Your full name" class="w-full border border-gray-200 px-4 py-3 bg-gray-50 hover:bg-white rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary font-secondary text-[16px] transition-all">
+    <div class="w-full max-w-md mx-auto bg-white rounded-lg shadow-sm border border-gray-200 p-8 md:p-12 mt-8 mb-8">
+        <div class="text-center mb-8">
+            <h2 class="font-sans text-[32px] font-bold text-gray-900 tracking-tight leading-tight mb-2">Support</h2>
+            <p class="font-secondary text-[16px] text-gray-500">We're here to help. Send us a message.</p>
         </div>
-        
-        <div>
-            <label class="block font-secondary text-gray-700 text-[14px] font-bold mb-2">Email</label>
-            <input type="email" placeholder="you@example.com" class="w-full border border-gray-200 px-4 py-3 bg-gray-50 hover:bg-white rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary font-secondary text-[16px] transition-all">
-        </div>
-        
-        <div>
-            <label class="block font-secondary text-gray-700 text-[14px] font-bold mb-2">Message</label>
-            <textarea placeholder="How can we help you?" rows="5" class="w-full border border-gray-200 px-4 py-3 bg-gray-50 hover:bg-white rounded focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary font-secondary text-[16px] transition-all resize-none"></textarea>
-        </div>
-        
-        <button type="submit" class="w-full bg-primary text-white font-sans font-bold text-[16px] px-4 py-3.5 rounded hover:bg-primaryHover transition-colors mt-2 text-center block">
-            Send Message
-        </button>
-      </form>
+
+        {% if messages %}
+            <div class="mb-6">
+                {% for message in messages %}
+                    <div class="p-3 rounded text-sm font-medium {% if 'error' in message.tags %}bg-red-50 text-red-600{% else %}bg-green-50 text-green-600{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if not sent %}
+        <form method="POST" class="flex flex-col gap-5">
+            {% csrf_token %}
+            <div>
+                <label class="block font-secondary text-gray-700 text-[14px] font-bold mb-2">Your Name</label>
+                <input type="text" name="name" required placeholder="Enter your name" class="w-full border border-gray-200 px-4 py-3 rounded bg-gray-50 hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary font-secondary text-[16px] transition-all">
+            </div>
+            <div>
+                <label class="block font-secondary text-gray-700 text-[14px] font-bold mb-2">Email</label>
+                <input type="email" name="email" required placeholder="Enter your email" class="w-full border border-gray-200 px-4 py-3 rounded bg-gray-50 hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary font-secondary text-[16px] transition-all">
+            </div>
+            <div>
+                <label class="block font-secondary text-gray-700 text-[14px] font-bold mb-2">Message</label>
+                <textarea name="message" required placeholder="How can we help?" rows="5" class="w-full border border-gray-200 px-4 py-3 rounded bg-gray-50 hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary font-secondary text-[16px] transition-all resize-none"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-primary text-white font-sans font-bold text-[16px] px-4 py-3 rounded hover:bg-primaryHover transition-colors mt-2 shadow-sm">
+                Send Message
+            </button>
+        </form>
+        {% endif %}
     </div>
 </div>
 {% endblock %}
