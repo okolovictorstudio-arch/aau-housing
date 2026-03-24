@@ -179,7 +179,7 @@ def initiate_payment(request):
     data = {
         'email': request.user.email,
         'amount': 300000,
-        'callback_url': 'https://aau-housing-production.up.railway.app/accounts/payment/verify/',
+        'callback_url': 'https://cradle.onrender.com/accounts/payment/verify/',
         'metadata': {
             'user_id': request.user.id,
         }

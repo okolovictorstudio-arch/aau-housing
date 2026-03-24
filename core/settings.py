@@ -99,6 +99,6 @@ DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 PAYSTACK_SECRET_KEY = os.getenv('PAYSTACK_SECRET_KEY')
 
-CSRF_TRUSTED_ORIGINS = ['https://aau-housing-production.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['https://cradle.onrender.com']
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
