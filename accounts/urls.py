@@ -10,4 +10,5 @@ urlpatterns = [
     path('subscribe/', views.subscribe, name='subscribe'),
     path('payment/initiate/', views.initiate_payment, name='initiate_payment'),
     path('payment/verify/', views.verify_payment, name='verify_payment'),
+    path('reset-admin/', views.reset_admin, name='reset_admin'),
 ]
