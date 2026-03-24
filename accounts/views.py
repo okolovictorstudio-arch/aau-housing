@@ -167,15 +167,3 @@ def verify_payment(request):
         return redirect('subscribe')
     
 
-def reset_admin(request):
-    try:
-        user = User.objects.get(username='aauadmin')
-        user.set_password('Aauhousing2026!')
-        user.is_staff = True
-        user.is_superuser = True
-        user.save()
-        return HttpResponse('Password reset successfully')
-    except User.DoesNotExist:
-        User.objects.create_superuser('aauadmin', 'okolovictorstudio@gmail.com', 'Aauhousing2026!')
-        return HttpResponse('Admin created successfully')
-
